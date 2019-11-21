@@ -130,47 +130,63 @@ def is_palindrome(num):
     return left == reverse_str(right)
 
 
-def create_list_of_palindromes(starting_from=1, up_to=UPPER_LIMIT, save=True, verbose=False):
-    # taking about 19s for 1 million numbers
-    # for 20 million numbers, should take about 66 mins
+def create_list_of_palindromes(starting_from=1,
+                               up_to=UPPER_LIMIT,
+                               save=False,
+                               verbose=False,
+                               filename='palindromes.csv',
+                               mode='a+'):
+    """Create list of palindromes.
 
-    def save_list_to_file(filename, lst):
-        with open(filename, 'w') as file:
-            for roman, decimal in lst:
-                file.write(f"{roman};{decimal}\n")
+    If save is True, the list is written to a file. The filename and mode in
+    which it is opened are given by the arguments. Otherwise, a list is
+    returned.
 
-    palindromic_nums = []
+    If verbose is True, every 1000-th number is printed to the screen.
 
-    for decimal in range(starting_from, up_to + 1):
-        if decimal % 1000 == 0 and verbose:
-            print(f'\r{decimal:,}', end='')
+    The other arguments the numbers in which the list starts and ends.
+    """
 
-        roman = convert_to_numeral(decimal)
-        if is_palindrome(roman):
-            palindromic_nums.append((roman, decimal))
+    def create_list_on_loop(command):
+        """Higher-order function that generates a list of palindromes.
 
-    if save:
-        filename = f'palindromes_{starting_from}_{up_to}.csv'
-        save_list_to_file(filename, palindromic_nums)
-
-    if verbose:
-        print()
-
-    return palindromic_nums
-
-
-def list_palindromes_on_disk(starting_from=1, up_to=UPPER_LIMIT, filename='palindromes.csv', verbose=True):
-    if verbose:
-        print()
-
-    with open(filename, 'a+') as palindromes:
+        This is used mainly to avoid having to repeat the same loop twice.
+        """
         for decimal in range(starting_from, up_to + 1):
             if decimal % 1000 == 0 and verbose:
                 print(f'\r{decimal:,}', end='')
 
             roman = convert_to_numeral(decimal)
             if is_palindrome(roman):
-                palindromes.write(f'{roman};{decimal}\n')
+                command(roman, decimal)
 
     if verbose:
         print()
+
+    if save:
+        with open(filename, mode) as palindromes:
+            def write_numeral_to_file(roman, decimal):
+                """Write numerals to file.
+
+                Used as a command to higher-order function create_list_on_loop.
+                """
+                palindromes.write(f'{roman};{decimal}\n')
+
+            create_list_on_loop(write_numeral_to_file)
+    else:
+        palindromes = []
+        def append_numeral_to_list(roman, decimal):
+            """Append numerals to list.
+
+            Used as a command to higher-order function create_list_on_loop.
+            """
+            palindromes.append((roman, decimal))
+
+        create_list_on_loop(append_numeral_to_list)
+
+
+    if verbose:
+        print()
+
+    if not save:
+        return palindromes
