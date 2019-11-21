@@ -72,24 +72,61 @@ ROMAN_NUMERAL_TABLE = [{
 }]
 
 
-def convert_to_numeral(decimal_integer):
+def barfunction_latex(prefix: str,
+                      unbarred_string: str,
+                      num_of_bars: int,
+                      separator_size: int = 2):
+    """Return a LaTeX-renderable representation of overline bars."""
+    bars_before = (r"\overline{" * num_of_bars) + r"\text{"
+    bars_after = r"}" + ("}" * num_of_bars)
+
+    if prefix:
+        separation = f'\\hspace{{{separator_size}pt}}'
+    else:
+        separation = ''
+
+    return prefix + separation + bars_before + unbarred_string + bars_after
+
+
+def barfunction_brackets(prefix: str, unbarred_string: str, num_of_bars: int):
+    """Represent bars as (possibly nested) square brackets.
+
+    For example, 3,000,000,000 is converted to [[MMM]].
+    """
+    bars_before = ('[' * num_of_bars)
+    bars_after = (']' * num_of_bars)
+    return prefix + bars_before + unbarred_string + bars_after
+
+
+def convert_to_numeral(decimal_integer: int, barfunction=barfunction_brackets):
+    """Convert decimal to Roman numeral.
+
+    The barfunction is a func with signature
+        barfunction(prefix: str, unbarred_str: str, num_of_bars: int)
+    to format in a str barred-Roman numerals.
+
+    The default option, barfunction_brackets, converts 3,000,000,000 to
+    [[MMM]], for example.
+
+    See: barfunction_latex, barfunction_brackets.
+    """
     remainder = decimal_integer
 
     numeral_string = ""
 
     for symbolset in ROMAN_NUMERAL_TABLE:
-        bars = symbolset['bars']
+        num_of_bars = symbolset['bars']
         symbols = symbolset['symbols']
-        return_list = []
+        list_of_occurring_symbols = []
 
         for integer, numeral in symbols:
             repetitions, remainder = divmod(remainder, integer)
-            return_list.append(numeral * repetitions)
+            list_of_occurring_symbols.append(numeral * repetitions)
 
-        unbarred_string = ''.join(return_list)
+        unbarred_string = ''.join(list_of_occurring_symbols)
         if unbarred_string:
-            barred_string = ('[' * bars) + unbarred_string + (']' * bars)
-            numeral_string = numeral_string + barred_string
+            numeral_string = barfunction(numeral_string, unbarred_string,
+                                         num_of_bars)
 
     return numeral_string
 
