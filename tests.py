@@ -1,21 +1,10 @@
 import csv
 
-from roman import create_list_of_palindromes, remove_bars
+from roman import create_list_of_palindromes, remove_bars, read_pairs_from_csv
 
-
-def read_numbers_from_csv(file='./test_data.csv', skip_first=True):
-    """Read numbers from file in format ROMAN;DECIMAL"""
-    with open(file) as csvfile:
-        if skip_first:
-            csvfile.readline()
-
-        reader = csv.reader(csvfile, delimiter=';')
-        for roman, decimal_str in reader:
-            without_bars = remove_bars(roman)
-            decimal = int(decimal_str)
-            palindromes_list.append((without_bars, decimal))
-        return palindromes_list
-
+def read_test_data():
+    filename = './test_data.csv'
+    return read_pairs_from_csv(filename, skip_first=True)
 
 def generate_data_for_testing():
     palindrome_tuples = create_list_of_palindromes(starting_from=1,

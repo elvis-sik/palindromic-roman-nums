@@ -227,3 +227,21 @@ def create_list_of_palindromes(starting_from=1,
 
     if not save:
         return palindromes
+
+
+def read_pairs_from_csv(filename, skip_first=False):
+    """Read numbers from file in format ROMAN;DECIMAL.
+
+    This will return a list of (roman_numeral: string, decimal: int) tuples.
+    The Roman numerals will have square brackets removed.
+    """
+    with open(file) as csvfile:
+        if skip_first:
+            csvfile.readline()
+
+        reader = csv.reader(csvfile, delimiter=';')
+        for roman, decimal_str in reader:
+            without_bars = remove_bars(roman)
+            decimal = int(decimal_str)
+            palindromes_list.append((without_bars, decimal))
+        return palindromes_list
