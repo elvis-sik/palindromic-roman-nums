@@ -183,7 +183,6 @@ def create_list_of_palindromes(starting_from=1,
 
     The other arguments the numbers in which the list starts and ends.
     """
-
     def create_list_on_loop(command):
         """Higher-order function that generates a list of palindromes.
 
@@ -202,6 +201,7 @@ def create_list_of_palindromes(starting_from=1,
 
     if save:
         with open(filename, mode) as palindromes:
+
             def write_numeral_to_file(roman, decimal):
                 """Write numerals to file.
 
@@ -212,6 +212,7 @@ def create_list_of_palindromes(starting_from=1,
             create_list_on_loop(write_numeral_to_file)
     else:
         palindromes = []
+
         def append_numeral_to_list(roman, decimal):
             """Append numerals to list.
 
@@ -220,7 +221,6 @@ def create_list_of_palindromes(starting_from=1,
             palindromes.append((roman, decimal))
 
         create_list_on_loop(append_numeral_to_list)
-
 
     if verbose:
         print()
