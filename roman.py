@@ -289,20 +289,14 @@ def create_palindromes_tex(input_file="./palindromes.csv",
         with open(output_file, "w") as file:
             file.write(string)
 
-    def format_single_table_line(roman, decimal):
+    def format_single_number(roman, decimal):
         """Format single line of LaTeX table."""
-        INDENTATION = "  "
-        return INDENTATION + roman + " & " + str(decimal) + r" \\"
-
-    FIRST_LINE = r"\begin{longtable}{ p{.20\textwidth}  p{.80\textwidth} }"
-    NEWLINE = "\n"
-    FINAL_LINE = r"\end{longtable}"
+        return f"{roman} ({decimal})"
 
     palindrome_decimals = read_decimals_from_csv(input_file)
     roman_dec_pairs = convert_bunch_of_decimals(palindrome_decimals)
 
-    table_lines = [format_single_table_line(*pair) for pair in roman_dec_pairs]
+    numbers_lines = [format_single_number(*pair) for pair in roman_dec_pairs]
 
-    latex_string = (FIRST_LINE + NEWLINE + NEWLINE.join(table_lines) +
-                    NEWLINE + FINAL_LINE)
+    latex_string = ", \n".join(numbers_lines)
     save_to_file(latex_string)
