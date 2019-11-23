@@ -294,7 +294,7 @@ def create_palindromes_tex(input_file="./palindromes.csv",
         INDENTATION = "  "
         return INDENTATION + roman + " & " + str(decimal) + r" \\"
 
-    FIRST_LINE = r"\begin{longtable}{ p{.20\textwidth}  p{.80\textwidth} }"
+    FIRST_LINE = r"\begin{longtable}{ p{.60\textwidth}  p{.20\textwidth} }"
     NEWLINE = "\n"
     FINAL_LINE = r"\end{longtable}"
 
