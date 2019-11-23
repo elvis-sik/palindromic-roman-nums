@@ -1,5 +1,3 @@
-import csv
-
 from roman import create_list_of_palindromes, remove_bars, read_pairs_from_csv
 
 def read_test_data():
