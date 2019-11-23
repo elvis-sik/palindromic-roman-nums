@@ -1,133 +1,141 @@
 """Converting decimal numbers to Roman numerals and checking for palindromes."""
 
+import csv
 import re
 
 UPPER_LIMIT = 3_999_999_999
-UPPER_LIMIT_STR = '[[MMM]][[CMXCIX]][CMXCIX]CMXCIX'
+UPPER_LIMIT_STR = "[[MMM]][[CMXCIX]][CMXCIX]CMXCIX"
 
 ROMAN_NUMERAL_TABLE = [{
     "bars": 2,
-    "symbols": [(1_000_000_000, 'M')],
+    "symbols": [(1_000_000_000, "M")],
 }, {
     "bars":
     2,
     "symbols": [
-        (900_000_000, 'CM'),
-        (500_000_000, 'D'),
-        (400_000_000, 'CD'),
-        (100_000_000, 'C'),
-        (90_000_000, 'XC'),
-        (50_000_000, 'L'),
-        (40_000_000, 'XL'),
-        (10_000_000, 'X'),
-        (9_000_000, 'IX'),
-        (8_000_000, 'VIII'),
-        (7_000_000, 'VII'),
-        (6_000_000, 'VI'),
-        (5_000_000, 'V'),
-        (4_000_000, 'IV'),
+        (900_000_000, "CM"),
+        (500_000_000, "D"),
+        (400_000_000, "CD"),
+        (100_000_000, "C"),
+        (90_000_000, "XC"),
+        (50_000_000, "L"),
+        (40_000_000, "XL"),
+        (10_000_000, "X"),
+        (9_000_000, "IX"),
+        (8_000_000, "VIII"),
+        (7_000_000, "VII"),
+        (6_000_000, "VI"),
+        (5_000_000, "V"),
+        (4_000_000, "IV"),
     ],
 }, {
     "bars": 1,
     "symbols": [
-        (1_000_000, 'M'),
+        (1_000_000, "M"),
     ],
 }, {
     "bars":
     1,
     "symbols": [
-        (900_000, 'CM'),
-        (500_000, 'D'),
-        (400_000, 'CD'),
-        (100_000, 'C'),
-        (90_000, 'XC'),
-        (50_000, 'L'),
-        (40_000, 'XL'),
-        (10_000, 'X'),
-        (9_000, 'IX'),
-        (8_000, 'VIII'),
-        (7_000, 'VII'),
-        (6_000, 'VI'),
-        (5_000, 'V'),
-        (4_000, 'IV'),
+        (900_000, "CM"),
+        (500_000, "D"),
+        (400_000, "CD"),
+        (100_000, "C"),
+        (90_000, "XC"),
+        (50_000, "L"),
+        (40_000, "XL"),
+        (10_000, "X"),
+        (9_000, "IX"),
+        (8_000, "VIII"),
+        (7_000, "VII"),
+        (6_000, "VI"),
+        (5_000, "V"),
+        (4_000, "IV"),
     ],
 }, {
     "bars":
     0,
     "symbols": [
-        (1_000, 'M'),
-        (900, 'CM'),
-        (500, 'D'),
-        (400, 'CD'),
-        (100, 'C'),
-        (90, 'XC'),
-        (50, 'L'),
-        (40, 'XL'),
-        (10, 'X'),
-        (9, 'IX'),
-        (5, 'V'),
-        (4, 'IV'),
-        (1, 'I'),
+        (1_000, "M"),
+        (900, "CM"),
+        (500, "D"),
+        (400, "CD"),
+        (100, "C"),
+        (90, "XC"),
+        (50, "L"),
+        (40, "XL"),
+        (10, "X"),
+        (9, "IX"),
+        (5, "V"),
+        (4, "IV"),
+        (1, "I"),
     ]
 }]
 
 
-def barfunction_latex(prefix: str,
-                      unbarred_string: str,
-                      num_of_bars: int,
-                      separator_size: int = 2):
-    """Return a LaTeX-renderable representation of overline bars."""
-    bars_before = (r"\overline{" * num_of_bars) + r"\text{"
-    bars_after = r"}" + ("}" * num_of_bars)
-
-    if prefix:
-        separation = f'\\hspace{{{separator_size}pt}}'
-    else:
-        separation = ''
-
-    return prefix + separation + bars_before + unbarred_string + bars_after
-
-
-def barfunction_brackets(prefix: str, unbarred_string: str, num_of_bars: int):
-    """Represent bars as (possibly nested) square brackets.
-
-    For example, 3,000,000,000 is converted to [[MMM]].
-    """
-    bars_before = ('[' * num_of_bars)
-    bars_after = (']' * num_of_bars)
-    return prefix + bars_before + unbarred_string + bars_after
-
-
-def convert_to_numeral(decimal_integer: int, barfunction=barfunction_brackets):
+def convert_to_numeral(decimal_integer: int, roman_format="brackets"):
     """Convert decimal to Roman numeral.
 
-    The barfunction is a func with signature
-        barfunction(prefix: str, unbarred_str: str, num_of_bars: int)
-    to format in a str barred-Roman numerals.
+    roman_format is a str containing either 'brackets' or 'latex'
+    The default option, 'brackets', converts 3,000,000,000 to [[MMM]] and
+    3,000,000 to [MMM].
 
-    The default option, barfunction_brackets, converts 3,000,000,000 to
-    [[MMM]], for example.
-
-    See: barfunction_latex, barfunction_brackets.
+    'latex' outputs a LaTeX formula for the numeral.
     """
-    remainder = decimal_integer
+    def barfunction_latex(prefix: str,
+                          unbarred_string: str,
+                          num_of_bars: int,
+                          separator_size: int = 2):
+        """Return a LaTeX-renderable representation of overline bars."""
+        bars_before = (r"\overline{" * num_of_bars) + r"\text{"
+        bars_after = r"}" + ("}" * num_of_bars)
 
+        if prefix:
+            separation = f"\\hspace{{{separator_size}pt}}"
+        else:
+            separation = ""
+
+        return prefix + separation + bars_before + unbarred_string + bars_after
+
+    def barfunction_brackets(prefix: str, unbarred_string: str,
+                             num_of_bars: int):
+        """Represent bars as (possibly nested) square brackets.
+
+        For example, 3,000,000,000 is converted to [[MMM]].
+        """
+        bars_before = ("[" * num_of_bars)
+        bars_after = ("]" * num_of_bars)
+        return prefix + bars_before + unbarred_string + bars_after
+
+    def latex_surround_with_dollars(string):
+        return "$" + string + "$"
+
+    if roman_format == 'latex':
+        barfunction = barfunction_latex
+    elif roman_format == 'brackets':
+        barfunction = barfunction_brackets
+    else:
+        raise ValueError('roman_format should be either "latex" or "brackets"')
+
+    remainder = decimal_integer
     numeral_string = ""
 
     for symbolset in ROMAN_NUMERAL_TABLE:
-        num_of_bars = symbolset['bars']
-        symbols = symbolset['symbols']
+        num_of_bars = symbolset["bars"]
+        symbols = symbolset["symbols"]
         list_of_occurring_symbols = []
 
         for integer, numeral in symbols:
             repetitions, remainder = divmod(remainder, integer)
             list_of_occurring_symbols.append(numeral * repetitions)
 
-        unbarred_string = ''.join(list_of_occurring_symbols)
+        unbarred_string = "".join(list_of_occurring_symbols)
         if unbarred_string:
             numeral_string = barfunction(numeral_string, unbarred_string,
                                          num_of_bars)
 
+    if roman_format == 'latex':
+        return latex_surround_with_dollars(numeral_string)
     return numeral_string
 
 
@@ -153,7 +161,7 @@ def reverse_str(numeral_str):
 
 
 def remove_bars(string):
-    return re.sub(r'[\[\]]', '', string)
+    return re.sub(r"[\[\]]", "", string)
 
 
 def is_palindrome(num):
@@ -171,8 +179,8 @@ def create_list_of_palindromes(starting_from=1,
                                up_to=UPPER_LIMIT,
                                save=False,
                                verbose=False,
-                               filename='palindromes.csv',
-                               mode='a+'):
+                               filename="palindromes.csv",
+                               mode="a+"):
     """Create list of palindromes.
 
     If save is True, the list is written to a file. The filename and mode in
@@ -190,7 +198,7 @@ def create_list_of_palindromes(starting_from=1,
         """
         for decimal in range(starting_from, up_to + 1):
             if decimal % 1000 == 0 and verbose:
-                print(f'\r{decimal:,}', end='')
+                print(f"\r{decimal:,}", end="")
 
             roman = convert_to_numeral(decimal)
             if is_palindrome(roman):
@@ -207,7 +215,7 @@ def create_list_of_palindromes(starting_from=1,
 
                 Used as a command to higher-order function create_list_on_loop.
                 """
-                palindromes.write(f'{roman};{decimal}\n')
+                palindromes.write(f"{roman};{decimal}\n")
 
             create_list_on_loop(write_numeral_to_file)
     else:
@@ -235,13 +243,66 @@ def read_pairs_from_csv(filename, skip_first=False):
     This will return a list of (roman_numeral: string, decimal: int) tuples.
     The Roman numerals will have square brackets removed.
     """
-    with open(file) as csvfile:
+    with open(filename) as csvfile:
         if skip_first:
             csvfile.readline()
 
-        reader = csv.reader(csvfile, delimiter=';')
+        reader = csv.reader(csvfile, delimiter=";")
+        palindromes_list = []
         for roman, decimal_str in reader:
             without_bars = remove_bars(roman)
             decimal = int(decimal_str)
             palindromes_list.append((without_bars, decimal))
         return palindromes_list
+
+
+def create_palindromes_tex(input_file="./palindromes.csv",
+                           output_file="./latex_list/Palindromes.tex"):
+    """Read palindromes.csv and saves Palindromes.tex
+
+    Converts pre-compiled palindromes list, saved in square-brackets format and
+    decimals, to a TeX file.
+    """
+    def read_decimals_from_csv(filename):
+        """Return only decimals from palindromes CSV file.
+
+        See read_pairs_from_csv.
+        """
+        pairs_list = read_pairs_from_csv(filename)
+        decimals_list = [decimal for (roman, decimal) in pairs_list]
+        return decimals_list
+
+    def convert_bunch_of_decimals(decimals_list):
+        """Pair decimals with their LaTeX-formatted Roman counterparts.
+
+        decimals_list is a list of ints
+        Return: list of (roman: string, decimal: int) pairs
+        """
+        pairs = []
+        for dec in decimals_list:
+            roman = convert_to_numeral(dec, roman_format='latex')
+            pairs.append((roman, dec))
+        return pairs
+
+    def save_to_file(string):
+        """Overwites output_file with string."""
+        with open(output_file, "w") as file:
+            file.write(string)
+
+    def format_single_table_line(roman, decimal):
+        """Format single line of LaTeX table."""
+        INDENTATION = "  "
+        return INDENTATION + roman + " & " + str(decimal) + r" \\"
+
+    FIRST_LINE = r"\begin{longtable}{ p{.20\textwidth}  p{.80\textwidth} }"
+    NEWLINE = "\n"
+    FINAL_LINE = r"\end{longtable}"
+
+    palindrome_decimals = read_decimals_from_csv(input_file)
+    roman_dec_pairs = convert_bunch_of_decimals(palindrome_decimals)
+
+    table_lines = [format_single_table_line(*pair) for pair in roman_dec_pairs]
+
+    latex_string = (FIRST_LINE + NEWLINE + NEWLINE.join(table_lines) +
+                    NEWLINE + FINAL_LINE)
+    save_to_file(latex_string)
