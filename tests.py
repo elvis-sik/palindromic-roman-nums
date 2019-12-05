@@ -3,13 +3,13 @@ import roman
 
 def read_test_data():
     """Read data in test_data.csv."""
-    filename = './test_data.csv'
+    filename = './data/test_data.csv'
     return roman.read_pairs_from_csv(filename, skip_first=True)
 
 
 def read_missing_in_test_data():
     """Read data in missing_in_test.csv."""
-    filename = './missing_in_test.csv'
+    filename = './data/missing_in_test.csv'
     list_of_missing_palindromes = roman.read_pairs_from_csv(filename,
                                                             skip_first=True)
     return set(list_of_missing_palindromes)
@@ -51,7 +51,7 @@ def compare_up_to_5_million(generated_data_source=generate_data_for_testing):
     }
 
 
-def test_a_few_random_numbers():
+def test_converting_a_few_random_numbers():
     assert roman.convert_to_numeral(3) == 'III'
     assert roman.convert_to_numeral(245) == 'CCXLV'
     assert roman.convert_to_numeral(7892) == '[VII]DCCCXCII'

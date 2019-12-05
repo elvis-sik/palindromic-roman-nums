@@ -214,7 +214,7 @@ def create_list_of_palindromes(starting_from=1,
                                up_to=UPPER_LIMIT,
                                save=False,
                                verbose=False,
-                               filename="palindromes.csv",
+                               filename="./data/palindromes.csv",
                                mode="a+"):
     """Create list of palindromes.
 
@@ -291,7 +291,7 @@ def read_pairs_from_csv(filename, skip_first=False):
         return palindromes_list
 
 
-def create_palindromes_tex(input_file="./palindromes.csv",
+def create_palindromes_tex(input_file="./data/palindromes.csv",
                            output_file="./latex_list/Palindromes.tex"):
     """Read palindromes.csv and saves Palindromes.tex
 
