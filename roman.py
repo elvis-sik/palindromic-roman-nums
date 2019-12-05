@@ -195,6 +195,7 @@ def reverse_str(numeral_str):
 
 
 def remove_bars(string):
+    """Return argument without square brackets ('[' and ']')."""
     return re.sub(r"[\[\]]", "", string)
 
 
