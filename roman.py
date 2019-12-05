@@ -108,6 +108,7 @@ def convert_to_numeral(decimal_integer: int, roman_format="brackets"):
         return prefix + bars_before + unbarred_string + bars_after
 
     def latex_surround_with_dollars(string):
+        """Surround LaTeX math expression with dollar signs."""
         return "$" + string + "$"
 
     if roman_format == 'latex':
