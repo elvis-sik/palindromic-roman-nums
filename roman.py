@@ -111,6 +111,42 @@ def convert_to_numeral(decimal_integer: int, roman_format="brackets"):
         """Surround LaTeX math expression with dollar signs."""
         return "$" + string + "$"
 
+    def list_occurring_roman_symbols(roman_symbols, integer_value):
+        """List symbols that occur in Roman representation of number.
+
+        + roman_symbols is [(int, str)], a list of tuples, each of which
+          representing one Roman symbol and its corresponding integer value.
+          For example, (3, 'III').
+        + integer_value is the value to be converted.
+
+        Return: remainder, list_of_occurring_symbols
+        + remainder: what remains from the number, which was too small to
+          represent with the provided symbols
+        + list_of_occurring_symbols: a list of the symbols present in the Roman
+          representation of the number.
+        """
+        remainder = integer_value
+        list_of_occurring_symbols = []
+
+        for integer_value, str_roman_symbol in roman_symbols:
+            repetitions, remainder = divmod(remainder, integer_value)
+            list_of_occurring_symbols.append(str_roman_symbol * repetitions)
+
+        return remainder, list_of_occurring_symbols
+
+    def apply_barfunction(list_of_occurring_symbols, barfunction,
+                          numeral_string, num_of_bars):
+        """Build up Roman numeral representation applying barfunction.
+
+        The barfunction is only applied if list_of_occurring_symbols is not
+        empty, otherwise the original numeral_string is returned untouched.
+        """
+        unbarred_string = "".join(list_of_occurring_symbols)
+        if unbarred_string:
+            numeral_string = barfunction(numeral_string, unbarred_string,
+                                         num_of_bars)
+        return numeral_string
+
     if roman_format == 'latex':
         barfunction = barfunction_latex
     elif roman_format == 'brackets':
@@ -124,16 +160,13 @@ def convert_to_numeral(decimal_integer: int, roman_format="brackets"):
     for symbolset in ROMAN_NUMERAL_TABLE:
         num_of_bars = symbolset["bars"]
         symbols = symbolset["symbols"]
-        list_of_occurring_symbols = []
 
-        for integer, numeral in symbols:
-            repetitions, remainder = divmod(remainder, integer)
-            list_of_occurring_symbols.append(numeral * repetitions)
+        remainder, list_of_occurring_symbols = list_occurring_roman_symbols(
+            symbols, remainder)
 
-        unbarred_string = "".join(list_of_occurring_symbols)
-        if unbarred_string:
-            numeral_string = barfunction(numeral_string, unbarred_string,
-                                         num_of_bars)
+        numeral_string = apply_barfunction(list_of_occurring_symbols,
+                                           barfunction, numeral_string,
+                                           num_of_bars)
 
     if roman_format == 'latex':
         return latex_surround_with_dollars(numeral_string)
