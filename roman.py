@@ -1,5 +1,6 @@
 """Converting decimal numbers to Roman numerals and checking for palindromes."""
 
+import argparse
 import csv
 import re
 
@@ -222,7 +223,7 @@ def create_list_of_palindromes(starting_from=1,
     which it is opened are given by the arguments. Otherwise, a list is
     returned.
 
-    If verbose is True, every 1000-th number is printed to the screen.
+    If verbose is True, every palindromic number is printed to the screen.
 
     The other arguments the numbers in which the list starts and ends.
     """
@@ -232,15 +233,17 @@ def create_list_of_palindromes(starting_from=1,
         This is used mainly to avoid having to repeat the same loop twice.
         """
         for decimal in range(starting_from, up_to + 1):
-            if decimal % 1000 == 0 and verbose:
-                print(f"\r{decimal:,}", end="")
-
             roman = convert_to_numeral(decimal)
+
             if is_palindrome(roman):
                 command(roman, decimal)
+                if verbose:
+                    print(f"{decimal:,} {roman}")
 
     if verbose:
-        print()
+        print(
+            f'Printing list of Roman palindromes from {starting_from} to {up_to}:'
+        )
 
     if save:
         with open(filename, mode) as palindromes:
@@ -341,3 +344,19 @@ def create_palindromes_tex(input_file="./data/palindromes.csv",
     latex_string = (FIRST_LINE + NEWLINE + "\n".join(numbers_lines) + NEWLINE +
                     FINAL_LINE)
     save_to_file(latex_string)
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(
+        description='Print list of palindromic numbers to stdout')
+    parser.add_argument(
+        '--up-to',
+        dest='up_to',
+        type=int,
+        action='store',
+        default=UPPER_LIMIT,
+        help='the largest integer the Roman counterpart of which'
+        ' should be checked for palindromicity')
+
+    args = parser.parse_args()
+    create_list_of_palindromes(up_to=args.up_to, verbose=True)
