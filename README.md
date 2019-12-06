@@ -6,7 +6,7 @@ We know a lot about decimal palindromic numbers.
 By contrast, as far as we know,
 even though Roman numerals have been around for a long time,
 nobody had determined how many of them are.
-The answer is 6950, at least for one specific notation.
+The answer is 6,950, at least for one specific notation.
 An accompanying paper will be published.
 
 ## The approach
