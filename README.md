@@ -30,3 +30,5 @@ It does not support the notation we adopted, so we rewrote the function.
 The code was written in Python 3.7 but should
 work in previous Python 3 versions as well.
 There are no dependencies.
+
+To see a sample, running `$ python roman.py` prints a list of palindromic Roman numerals to stdout.
