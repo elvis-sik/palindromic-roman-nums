@@ -23,7 +23,7 @@ to list all possible Roman numerals, and check which ones are palindromic.
 The functionality of converting an integer to a Roman numeral
 is based on jambonrose's
 [roman-numerals](https://github.com/jambonrose/roman-numerals) library.
-Since it does not support the notation we adopted, we had to adapt it.
+It does not support the notation we adopted, so we rewrote the function.
 
 ## Running the code
 
