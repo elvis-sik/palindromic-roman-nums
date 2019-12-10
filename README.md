@@ -2,7 +2,7 @@
 
 A (brute force) answer to the question: how many Roman numerals are palindromic?
 
-We know a lot about decimal palindromic numbers.
+A lot is known about decimal palindromic numbers.
 By contrast, as far as we know,
 even though Roman numerals have been around for a long time,
 nobody had determined how many of them are.
