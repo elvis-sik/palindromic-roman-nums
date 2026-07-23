@@ -1,35 +1,31 @@
 # Palindromic Roman numerals
 
-A (brute force) answer to the question: how many Roman numerals are palindromic?
+> [!NOTE]
+> **Historical project.** This 2019 exploration is archived and no longer
+> maintained.
 
-A lot is known about decimal palindromic numbers.
-By contrast, as far as we know,
-even though Roman numerals have been around for a long time,
-nobody had determined how many of them are.
-The answer is 6,950, at least for one specific notation.
-Further discussion, including on different answers for different notations,
-can be found in an accompanying paper (to be published).
+A brute-force answer to the question: how many Roman numerals are palindromic?
+For the notation implemented here, the answer is **6,950**.
 
-## The approach
+## Approach
 
-The solution relies on two components:
-+ a function that converts integers to Roman numerals
-+ a function that checks if a given Roman numeral is palindromic
+The program combines:
 
-We chose a particular representation for Roman numerals for which
-there are 3,999,999,999 possible numerals.
-Since there are a finite number of Roman numerals, all we have to do is
-to list all possible ones, and check which of them are palindromic.
+- a function that converts integers to Roman numerals; and
+- a function that tests whether a numeral is a palindrome.
 
-The functionality of converting an integer to a Roman numeral
-is based on jambonrose's
-[roman-numerals](https://github.com/jambonrose/roman-numerals) library.
-It does not support the notation we adopted, so we rewrote the function.
+The chosen representation contains 3,999,999,999 possible numerals, so the
+program enumerates that finite space and checks each representation. The
+conversion logic began from jambonrose’s
+[roman-numerals](https://github.com/jambonrose/roman-numerals) library and was
+adapted for the notation used in this experiment.
 
 ## Running the code
 
-The code was written in Python 3.7 but should
-work in previous Python 3 versions as well.
-There are no dependencies.
+The code was written for Python 3.7 and has no third-party dependencies:
 
-To see a sample, running `$ python roman.py` prints a list of palindromic Roman numerals to stdout.
+```bash
+python roman.py
+```
+
+That command prints a sample of palindromic Roman numerals to standard output.
